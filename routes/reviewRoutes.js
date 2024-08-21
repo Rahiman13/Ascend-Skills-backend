@@ -7,20 +7,20 @@ const {
   deleteReview,
   getReviewCount,
 } = require('../controllers/reviewController');
-const { protect, admin } = require('../middleware/authMiddleware');
+// const { protect, admin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 router.route('/')
   .get(getReviews)
-  .post(protect, createReview);
+  .post(createReview);
 
 router.route('/count')
   .get(getReviewCount);
 
 router.route('/:id')
   .get(getReviewById)
-  .put(protect, updateReview)
-  .delete(protect, admin, deleteReview);
+  .put(updateReview)
+  .delete(deleteReview);
 
 module.exports = router;

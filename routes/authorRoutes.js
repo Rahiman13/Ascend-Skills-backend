@@ -1,5 +1,4 @@
 const express = require('express');
-const multer = require('multer');
 const {
   getAuthors,
   getAuthorById,
@@ -8,30 +7,27 @@ const {
   deleteAuthor,
   getAuthorCount,
 } = require('../controllers/authorController');
+const multer = require('multer');
+const path = require('path');
 
 const router = express.Router();
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
-router.route('/')
-  .get(getAuthors)
-  .post(upload.single('image'), createAuthor);
-
-router.route('/count')
-  .get(getAuthorCount);
-
-router.route('/:id')
-  .get(getAuthorById)
-  .put(upload.single('image'), updateAuthor)
-  .delete(deleteAuthor);
+router.get('/', getAuthors);
+router.get('/count', getAuthorCount); // Add this line
+router.get('/:id', getAuthorById);
+router.post('/', upload.single('image'), createAuthor);
+router.put('/:id', upload.single('image'), updateAuthor);
+router.delete('/:id', deleteAuthor);
 
 module.exports = router;

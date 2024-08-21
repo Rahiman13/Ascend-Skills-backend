@@ -8,7 +8,7 @@ const getTeamMembers = async (req, res) => {
     const teamMembers = await TeamMember.find();
     res.json(teamMembers);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Failed to retrieve team members', error: error.message });
   }
 };
 
@@ -24,7 +24,7 @@ const getTeamMemberById = async (req, res) => {
       res.status(404).json({ message: 'Team member not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Failed to retrieve team member', error: error.message });
   }
 };
 
@@ -35,20 +35,24 @@ const createTeamMember = async (req, res) => {
   const { name, position, experience, bio, degrees } = req.body;
   const image = req.file ? req.file.filename : '';
 
-  const teamMember = new TeamMember({
-    name,
-    position,
-    experience,
-    bio,
-    image,
-    degrees: degrees ? JSON.parse(degrees) : [],
-  });
+  if (!name || !position || !experience || !bio) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
 
   try {
+    const teamMember = new TeamMember({
+      name,
+      position,
+      experience,
+      bio,
+      image,
+      degrees: degrees ? JSON.parse(degrees) : [],
+    });
+
     const newTeamMember = await teamMember.save();
     res.status(201).json(newTeamMember);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Failed to create team member', error: error.message });
   }
 };
 
@@ -76,7 +80,7 @@ const updateTeamMember = async (req, res) => {
       res.status(404).json({ message: 'Team member not found' });
     }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Failed to update team member', error: error.message });
   }
 };
 
@@ -94,7 +98,7 @@ const deleteTeamMember = async (req, res) => {
       res.status(404).json({ message: 'Team member not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Failed to delete team member', error: error.message });
   }
 };
 
@@ -106,10 +110,9 @@ const getTeamMemberCount = async (req, res) => {
     const count = await TeamMember.countDocuments();
     res.json({ count });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Failed to get team member count', error: error.message });
   }
 };
-
 
 module.exports = {
   getTeamMembers,

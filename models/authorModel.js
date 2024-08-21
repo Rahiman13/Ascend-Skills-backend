@@ -1,5 +1,23 @@
 const mongoose = require('mongoose');
 
+const reviewSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
+  rating: {
+    type: String,
+    required: true,
+    min: 1,
+    max: 5,
+  },
+  comment: {
+    type: String,
+    required: true,
+  },
+});
+
 const degreeSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -10,29 +28,9 @@ const degreeSchema = new mongoose.Schema({
     required: true,
   },
   year: {
-    type: String,
-    required: true,
-  },
-});
-
-const authorReviewSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'User',
-  },
-  rating: {
     type: Number,
     required: true,
-    min: 1,
-    max: 5,
   },
-  comment: {
-    type: String,
-    required: true,
-  },
-}, {
-  timestamps: true,
 });
 
 const authorSchema = new mongoose.Schema({
@@ -42,8 +40,8 @@ const authorSchema = new mongoose.Schema({
   },
   courseId: [{
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: 'Course',
+    required: true,
   }],
   bio: {
     type: String,
@@ -51,9 +49,8 @@ const authorSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    // required: true,
   },
-  authorReviews: [authorReviewSchema],
+  authorReviews: [reviewSchema],
   degrees: [degreeSchema],
   experience: {
     type: String,

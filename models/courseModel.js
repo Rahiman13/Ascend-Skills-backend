@@ -13,19 +13,18 @@ const courseSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  author: {
+  authorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Author',
+    required: true,
+  },
+  authorName: {
     type: String,
     required: true,
   },
   authorImage: {
     type: String,
-     required: false,
-     default : null,
-
-  },
-  authorId:{
-    type: mongoose.Schema.Types.ObjectId,
-     required:true,
+    // required: true,
   },
   price: {
     type: Number,
@@ -33,8 +32,11 @@ const courseSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: false,
-    default : null,
+    // required: true,
+  },
+  courseRating: {
+    type: String,
+    required: true,
   },
   category: {
     type: String,
@@ -45,6 +47,10 @@ const courseSchema = new mongoose.Schema({
     of: [String],
     required: true,
   },
+  reviews: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Review',
+  }],
 }, {
   timestamps: true,
 });

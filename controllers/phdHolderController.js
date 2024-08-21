@@ -54,30 +54,35 @@ const updatePhdHolder = async (req, res) => {
   const image = req.file ? req.file.path : null;
 
   try {
-    const phdHolder = await PhdHolder.findById(req.params.id);
+    const phdHolderId = req.params.id;
+    const { name, university, fieldOfStudy, yearOfCompletion, publications } = req.body;
+    const image = req.file;
 
-    if (phdHolder) {
-      phdHolder.name = name || phdHolder.name;
-      phdHolder.university = university || phdHolder.university;
-      phdHolder.fieldOfStudy = fieldOfStudy || phdHolder.fieldOfStudy;
-      phdHolder.yearOfCompletion = yearOfCompletion || phdHolder.yearOfCompletion;
-      phdHolder.publications = publications || phdHolder.publications;
+    // Fetch current PhD holder details to get old image path
+    const phdHolder = await PhdHolder.findById(phdHolderId);
 
-      if (image) {
-        // Delete the old image if it exists
-        if (phdHolder.image) {
-          fs.unlinkSync(path.join(__dirname, '..', phdHolder.image));
-        }
-        phdHolder.image = image;
+    // Handle old image deletion
+    if (phdHolder.image && image) {
+      const oldImagePath = path.join(__dirname, 'uploads', phdHolder.image);
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
       }
-
-      const updatedPhdHolder = await phdHolder.save();
-      res.json(updatedPhdHolder);
-    } else {
-      res.status(404).json({ message: 'PHD holder not found' });
     }
+
+    // Update PhD holder
+    phdHolder.name = name;
+    phdHolder.university = university;
+    phdHolder.fieldOfStudy = fieldOfStudy;
+    phdHolder.yearOfCompletion = yearOfCompletion;
+    phdHolder.publications = publications;
+    if (image) {
+      phdHolder.image = image.filename;
+    }
+    await phdHolder.save();
+
+    res.status(200).json(phdHolder);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Error updating PhD holder', error });
   }
 };
 

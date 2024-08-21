@@ -1,10 +1,9 @@
-const Review = require('../models/reviewModel');
-const Course = require('../models/courseModel');
-const User = require('../models/userModel');
+const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
+const Review = require('../models/reviewModel');
 
-// Configure multer for image upload
+// Multer configuration for image upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
@@ -148,7 +147,6 @@ const getReviewCount = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 
 module.exports = {
     getReviews,
